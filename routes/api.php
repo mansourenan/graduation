@@ -9,6 +9,7 @@ use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DetectionController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -22,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update']);
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar']);
     Route::post('/profile/change-password', [ProfileController::class, 'changePassword']);
+    Route::post('/profile/notifications', [ProfileController::class, 'toggleNotifications']);
 
     // Settings Routes
     Route::get('/settings', [SettingsController::class, 'index']);
@@ -52,3 +54,13 @@ Route::post('/test-email', function () {
 Route::middleware(['auth:sanctum', 'is_admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 });
+
+// Social login routes
+Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+Route::get('/auth/facebook/redirect', [AuthController::class, 'redirectToFacebook']);
+Route::get('/auth/facebook/callback', [AuthController::class, 'handleFacebookCallback']);
+Route::get('/auth/twitter/redirect', [AuthController::class, 'redirectToTwitter']);
+Route::get('/auth/twitter/callback', [AuthController::class, 'handleTwitterCallback']);
+
+Route::get('/detection/status', [DetectionController::class, 'status']);

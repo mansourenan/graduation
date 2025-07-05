@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Driver;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -85,5 +86,69 @@ class AuthController extends Controller
         }
 
         return response()->json(['message' => 'Logged out successfully']);
+    }
+
+    // تسجيل الدخول عبر Google
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+    public function handleGoogleCallback()
+    {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+        $driver = Driver::firstOrCreate([
+            'email' => $googleUser->getEmail(),
+        ], [
+            'first_name' => $googleUser->getName(),
+            'password' => bcrypt(uniqid()),
+        ]);
+        $token = $driver->createToken('driver_token')->plainTextToken;
+        return response()->json([
+            'message' => 'Login with Google successful',
+            'token' => $token,
+            'driver' => $driver,
+        ]);
+    }
+    // تسجيل الدخول عبر Facebook
+    public function redirectToFacebook()
+    {
+        return Socialite::driver('facebook')->stateless()->redirect();
+    }
+    public function handleFacebookCallback()
+    {
+        $fbUser = Socialite::driver('facebook')->stateless()->user();
+        $driver = Driver::firstOrCreate([
+            'email' => $fbUser->getEmail(),
+        ], [
+            'first_name' => $fbUser->getName(),
+            'password' => bcrypt(uniqid()),
+        ]);
+        $token = $driver->createToken('driver_token')->plainTextToken;
+        return response()->json([
+            'message' => 'Login with Facebook successful',
+            'token' => $token,
+            'driver' => $driver,
+        ]);
+    }
+    // تسجيل الدخول عبر Twitter
+    public function redirectToTwitter()
+    {
+        return Socialite::driver('twitter')->stateless()->redirect();
+    }
+    public function handleTwitterCallback()
+    {
+        $twUser = Socialite::driver('twitter')->stateless()->user();
+        $driver = Driver::firstOrCreate([
+            'email' => $twUser->getEmail(),
+        ], [
+            'first_name' => $twUser->getName(),
+            'password' => bcrypt(uniqid()),
+        ]);
+        $token = $driver->createToken('driver_token')->plainTextToken;
+        return response()->json([
+            'message' => 'Login with Twitter successful',
+            'token' => $token,
+            'driver' => $driver,
+        ]);
     }
 }

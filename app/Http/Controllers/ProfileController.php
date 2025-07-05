@@ -11,7 +11,15 @@ class ProfileController extends Controller
 {
     public function show()
     {
-        return response()->json(Auth::user());
+        $user = Auth::user();
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name ?? $user->first_name,
+            'email' => $user->email,
+            'phone_number' => $user->phone_number ?? null,
+            'avatar' => $user->avatar ?? null,
+            'notifications_enabled' => $user->notifications_enabled ?? true,
+        ]);
     }
 
     public function update(Request $request)
@@ -62,5 +70,19 @@ class ProfileController extends Controller
         $user->save();
 
         return response()->json(['message' => 'Password changed successfully']);
+    }
+
+    public function toggleNotifications(Request $request)
+    {
+        $user = Auth::user();
+        $request->validate([
+            'enabled' => 'required|boolean',
+        ]);
+        $user->notifications_enabled = $request->enabled;
+        $user->save();
+        return response()->json([
+            'message' => 'Notification status updated',
+            'notifications_enabled' => $user->notifications_enabled
+        ]);
     }
 }

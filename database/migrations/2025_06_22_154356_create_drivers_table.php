@@ -18,6 +18,7 @@ return new class extends Migration
     $table->string('first_name')->nullable();
     $table->string('last_name')->nullable();
     $table->string('phone_number')->nullable();
+    $table->boolean('notifications_enabled')->default(true);
     $table->timestamps();
 });
     }

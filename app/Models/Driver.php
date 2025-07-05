@@ -20,6 +20,7 @@ class Driver extends Authenticatable
         'last_name',
         'phone_number',
         'avatar',
+        'notifications_enabled',
     ];
 
     protected $hidden = [
@@ -30,6 +31,7 @@ class Driver extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'notifications_enabled' => 'boolean',
     ];
 
 }
