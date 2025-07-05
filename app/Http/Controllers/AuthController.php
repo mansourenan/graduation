@@ -15,27 +15,40 @@ class AuthController extends Controller
             'password' => 'required|confirmed|min:6',
         ]);
 
-        $driver = Driver::create([
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+        try {
+            $driver = Driver::create([
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+            ]);
 
-        return response()->json(['message' => 'Registered successfully', 'driver' => $driver], 201);
+            return response()->json(['message' => 'Registered successfully', 'driver' => $driver], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Registration failed', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function completeProfile(Request $request)
     {
         $request->validate([
             'driver_id' => 'required|exists:drivers,id',
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'phone_number' => 'required|string',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
         ]);
 
-        $driver = Driver::find($request->driver_id);
-        $driver->update($request->only(['first_name', 'last_name', 'phone_number']));
+        try {
+            $driver = Driver::find($request->driver_id);
+            
+            if (!$driver) {
+                return response()->json(['message' => 'Driver not found'], 404);
+            }
 
-        return response()->json(['message' => 'Profile completed', 'driver' => $driver], 200);
+            $driver->update($request->only(['first_name', 'last_name', 'phone_number']));
+
+            return response()->json(['message' => 'Profile completed', 'driver' => $driver], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Profile update failed', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function login(Request $request)
@@ -45,26 +58,31 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $driver = Driver::where('email', $request->email)->first();
+        try {
+            $driver = Driver::where('email', $request->email)->first();
 
-        if (!$driver || !Hash::check($request->password, $driver->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            if (!$driver || !Hash::check($request->password, $driver->password)) {
+                return response()->json(['message' => 'Invalid credentials'], 401);
+            }
+
+            $token = $driver->createToken('driver_token')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Login successful',
+                'token' => $token,
+                'driver' => $driver,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Login failed', 'error' => $e->getMessage()], 500);
         }
-
-        // ✅ توليد التوكن باستخدام Sanctum
-        $token = $driver->createToken('driver_token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'Login successful',
-            'token' => $token,
-            'driver' => $driver,
-        ]);
     }
 
     public function logout(Request $request)
     {
-        // لو انت مشغل Laravel Sanctum أو Passport الكود ده يشتغل
-        $request->user()->currentAccessToken()->delete();
+        // التحقق من وجود المستخدم
+        if ($request->user()) {
+            $request->user()->currentAccessToken()->delete();
+        }
 
         return response()->json(['message' => 'Logged out successfully']);
     }

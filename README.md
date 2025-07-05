@@ -44,6 +44,69 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 - **[Redberry](https://redberry.international/laravel-development)**
 - **[Active Logic](https://activelogic.com)**
 
+## Deployment Instructions
+
+### Prerequisites
+- PHP 8.2 or higher
+- Composer
+- MySQL/MariaDB database
+- Web server (Apache/Nginx)
+
+### Local Development Setup
+```bash
+# Clone the repository
+git clone <repository-url>
+cd <project-directory>
+
+# Install dependencies
+composer install
+npm install
+
+# Copy environment file
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+
+# Configure database in .env file
+# Run migrations
+php artisan migrate
+
+# Start development server
+php artisan serve
+npm run dev
+```
+
+### Production Deployment
+
+#### Option 1: Traditional Hosting
+1. Upload files to your hosting server
+2. Set document root to `public/` directory
+3. Configure `.env` file with production settings
+4. Run: `composer install --optimize-autoloader --no-dev`
+5. Run: `php artisan config:cache`
+6. Run: `php artisan route:cache`
+7. Run: `php artisan view:cache`
+
+#### Option 2: Heroku
+1. Install Heroku CLI
+2. Run: `heroku create your-app-name`
+3. Run: `git push heroku main`
+4. Configure environment variables in Heroku dashboard
+
+#### Option 3: Vercel
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables in Vercel dashboard
+3. Deploy automatically on push
+
+### Environment Variables
+Make sure to configure these variables in production:
+- `APP_KEY` - Application encryption key
+- `APP_URL` - Your application URL
+- `DB_*` - Database connection settings
+- `MAIL_*` - Email configuration
+- `JWT_SECRET` - JWT authentication secret
+
 ## Contributing
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).

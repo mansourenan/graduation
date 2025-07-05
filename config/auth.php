@@ -3,8 +3,8 @@
 return [
 
     'defaults' => [
-        'guard' => 'web',
-        'passwords' => 'users',
+        'guard' => 'api',
+        'passwords' => 'drivers',
     ],
 
     'guards' => [
@@ -15,7 +15,7 @@ return [
 
         'api' => [
             'driver' => 'sanctum',
-            'provider' => 'users',
+            'provider' => 'drivers',
         ],
     ],
 

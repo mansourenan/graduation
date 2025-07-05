@@ -11,6 +11,8 @@ class Driver extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $table = 'drivers';
+
     protected $fillable = [
         'email',
         'password',
@@ -23,6 +25,11 @@ class Driver extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
 }

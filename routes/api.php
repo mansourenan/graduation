@@ -8,18 +8,15 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
+use App\Http\Controllers\AdminController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/complete-profile', [AuthController::class, 'completeProfile']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
-Route::post('/verify-code', [PasswordResetController::class, 'verifyCode']);
-Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
-
-
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/complete-profile', [AuthController::class, 'completeProfile']);
+    
     // Profile Routes
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
@@ -35,6 +32,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-Mail::raw('اختبار البريد', function ($message) {
-    $message->to('test@example.com')->subject('اختبار');
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
+Route::post('/verify-code', [PasswordResetController::class, 'verifyCode']);
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+
+// Health check route
+Route::get('/health', function () {
+    return response()->json(['status' => 'OK', 'message' => 'API is running']);
+});
+
+// Test email route
+Route::post('/test-email', function () {
+    Mail::raw('اختبار البريد', function ($message) {
+        $message->to('test@example.com')->subject('اختبار');
+    });
+    return response()->json(['message' => 'Email sent successfully']);
+});
+
+Route::middleware(['auth:sanctum', 'is_admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 });

@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "mansourenan/arrive-alive-backend",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Laravel API Backend for Arrive Alive Application",
+    "keywords": ["laravel", "api", "backend", "arrive-alive"],
     "license": "MIT",
     "require": {
         "php": "^8.2",

@@ -9,6 +9,7 @@
 .env
 .env.backup
 .env.production
+.env.example
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
@@ -22,3 +23,6 @@ yarn-error.log
 /.vscode
 /.zed
 /arrive-alive-backend
+*.log
+.DS_Store
+Thumbs.db
