@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DetectionController;
+use App\Http\Controllers\AuthSocialController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -55,11 +56,8 @@ Route::middleware(['auth:sanctum', 'is_admin'])->group(function () {
 });
 
 // Social OAuth Routes
-Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']);
-Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
-Route::get('/auth/facebook/redirect', [AuthController::class, 'redirectToFacebook']);
-Route::get('/auth/facebook/callback', [AuthController::class, 'handleFacebookCallback']);
-Route::get('/auth/twitter/redirect', [AuthController::class, 'redirectToTwitter']);
-Route::get('/auth/twitter/callback', [AuthController::class, 'handleTwitterCallback']);
+Route::get('/auth/{provider}/redirect', [AuthSocialController::class, 'redirectTo']);
+Route::get('/auth/{provider}/callback', [AuthSocialController::class, 'handleCallback']);
+
 
 Route::get('/detection/status', [DetectionController::class, 'status']);

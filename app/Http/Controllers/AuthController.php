@@ -88,7 +88,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out successfully']);
     }
 
-    // Google OAuth Methods
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->stateless()->redirect();
@@ -115,7 +114,7 @@ class AuthController extends Controller
         }
     }
 
-    // Facebook OAuth Methods
+    
     public function redirectToFacebook()
     {
         return Socialite::driver('facebook')->stateless()->redirect();
@@ -142,7 +141,7 @@ class AuthController extends Controller
         }
     }
 
-    // Twitter OAuth Methods
+    
     public function redirectToTwitter()
     {
         return Socialite::driver('twitter')->stateless()->redirect();
