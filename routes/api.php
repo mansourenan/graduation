@@ -17,20 +17,20 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/complete-profile', [AuthController::class, 'completeProfile']);
-    
-    // Profile Routes
+
+
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar']);
     Route::post('/profile/change-password', [ProfileController::class, 'changePassword']);
     Route::post('/profile/notifications', [ProfileController::class, 'toggleNotifications']);
 
-    // Settings Routes
+
     Route::get('/settings', [SettingsController::class, 'index']);
     Route::get('/settings/about', [SettingsController::class, 'about']);
     Route::get('/settings/general', [SettingsController::class, 'general']);
 
-    // Logout
+
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
@@ -38,12 +38,11 @@ Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkE
 Route::post('/verify-code', [PasswordResetController::class, 'verifyCode']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
-// Health check route
+
 Route::get('/health', function () {
     return response()->json(['status' => 'OK', 'message' => 'API is running']);
 });
 
-// Test email route
 Route::post('/test-email', function () {
     Mail::raw('اختبار البريد', function ($message) {
         $message->to('test@example.com')->subject('اختبار');
@@ -55,7 +54,7 @@ Route::middleware(['auth:sanctum', 'is_admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 });
 
-// Social login routes
+// Social OAuth Routes
 Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::get('/auth/facebook/redirect', [AuthController::class, 'redirectToFacebook']);

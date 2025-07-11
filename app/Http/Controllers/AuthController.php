@@ -17,12 +17,12 @@ class AuthController extends Controller
         ]);
 
         try {
-            $driver = Driver::create([
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-            ]);
+        $driver = Driver::create([
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
 
-            return response()->json(['message' => 'Registered successfully', 'driver' => $driver], 201);
+        return response()->json(['message' => 'Registered successfully', 'driver' => $driver], 201);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Registration failed', 'error' => $e->getMessage()], 500);
         }
@@ -38,15 +38,15 @@ class AuthController extends Controller
         ]);
 
         try {
-            $driver = Driver::find($request->driver_id);
+        $driver = Driver::find($request->driver_id);
             
             if (!$driver) {
                 return response()->json(['message' => 'Driver not found'], 404);
             }
 
-            $driver->update($request->only(['first_name', 'last_name', 'phone_number']));
+        $driver->update($request->only(['first_name', 'last_name', 'phone_number']));
 
-            return response()->json(['message' => 'Profile completed', 'driver' => $driver], 200);
+        return response()->json(['message' => 'Profile completed', 'driver' => $driver], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Profile update failed', 'error' => $e->getMessage()], 500);
         }
@@ -60,19 +60,19 @@ class AuthController extends Controller
         ]);
 
         try {
-            $driver = Driver::where('email', $request->email)->first();
+        $driver = Driver::where('email', $request->email)->first();
 
-            if (!$driver || !Hash::check($request->password, $driver->password)) {
-                return response()->json(['message' => 'Invalid credentials'], 401);
-            }
+        if (!$driver || !Hash::check($request->password, $driver->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
 
-            $token = $driver->createToken('driver_token')->plainTextToken;
+        $token = $driver->createToken('driver_token')->plainTextToken;
 
-            return response()->json([
-                'message' => 'Login successful',
-                'token' => $token,
-                'driver' => $driver,
-            ]);
+        return response()->json([
+            'message' => 'Login successful',
+            'token' => $token,
+            'driver' => $driver,
+        ]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Login failed', 'error' => $e->getMessage()], 500);
         }
@@ -80,75 +80,92 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // التحقق من وجود المستخدم
+       
         if ($request->user()) {
-            $request->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()->delete();
         }
 
         return response()->json(['message' => 'Logged out successfully']);
     }
 
-    // تسجيل الدخول عبر Google
+    // Google OAuth Methods
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->stateless()->redirect();
     }
+
     public function handleGoogleCallback()
     {
-        $googleUser = Socialite::driver('google')->stateless()->user();
-        $driver = Driver::firstOrCreate([
-            'email' => $googleUser->getEmail(),
-        ], [
-            'first_name' => $googleUser->getName(),
-            'password' => bcrypt(uniqid()),
-        ]);
-        $token = $driver->createToken('driver_token')->plainTextToken;
-        return response()->json([
-            'message' => 'Login with Google successful',
-            'token' => $token,
-            'driver' => $driver,
-        ]);
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+            $driver = Driver::firstOrCreate([
+                'email' => $googleUser->getEmail(),
+            ], [
+                'first_name' => $googleUser->getName(),
+                'password' => bcrypt(uniqid()),
+            ]);
+            $token = $driver->createToken('driver_token')->plainTextToken;
+            return response()->json([
+                'message' => 'Login with Google successful',
+                'token' => $token,
+                'driver' => $driver,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Google login failed', 'error' => $e->getMessage()], 500);
+        }
     }
-    // تسجيل الدخول عبر Facebook
+
+    // Facebook OAuth Methods
     public function redirectToFacebook()
     {
         return Socialite::driver('facebook')->stateless()->redirect();
     }
+
     public function handleFacebookCallback()
     {
-        $fbUser = Socialite::driver('facebook')->stateless()->user();
-        $driver = Driver::firstOrCreate([
-            'email' => $fbUser->getEmail(),
-        ], [
-            'first_name' => $fbUser->getName(),
-            'password' => bcrypt(uniqid()),
-        ]);
-        $token = $driver->createToken('driver_token')->plainTextToken;
-        return response()->json([
-            'message' => 'Login with Facebook successful',
-            'token' => $token,
-            'driver' => $driver,
-        ]);
+        try {
+            $fbUser = Socialite::driver('facebook')->stateless()->user();
+            $driver = Driver::firstOrCreate([
+                'email' => $fbUser->getEmail(),
+            ], [
+                'first_name' => $fbUser->getName(),
+                'password' => bcrypt(uniqid()),
+            ]);
+            $token = $driver->createToken('driver_token')->plainTextToken;
+            return response()->json([
+                'message' => 'Login with Facebook successful',
+                'token' => $token,
+                'driver' => $driver,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Facebook login failed', 'error' => $e->getMessage()], 500);
+        }
     }
-    // تسجيل الدخول عبر Twitter
+
+    // Twitter OAuth Methods
     public function redirectToTwitter()
     {
         return Socialite::driver('twitter')->stateless()->redirect();
     }
+
     public function handleTwitterCallback()
     {
-        $twUser = Socialite::driver('twitter')->stateless()->user();
-        $driver = Driver::firstOrCreate([
-            'email' => $twUser->getEmail(),
-        ], [
-            'first_name' => $twUser->getName(),
-            'password' => bcrypt(uniqid()),
-        ]);
-        $token = $driver->createToken('driver_token')->plainTextToken;
-        return response()->json([
-            'message' => 'Login with Twitter successful',
-            'token' => $token,
-            'driver' => $driver,
-        ]);
+        try {
+            $twUser = Socialite::driver('twitter')->stateless()->user();
+            $driver = Driver::firstOrCreate([
+                'email' => $twUser->getEmail(),
+            ], [
+                'first_name' => $twUser->getName(),
+                'password' => bcrypt(uniqid()),
+            ]);
+            $token = $driver->createToken('driver_token')->plainTextToken;
+            return response()->json([
+                'message' => 'Login with Twitter successful',
+                'token' => $token,
+                'driver' => $driver,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Twitter login failed', 'error' => $e->getMessage()], 500);
+        }
     }
 }

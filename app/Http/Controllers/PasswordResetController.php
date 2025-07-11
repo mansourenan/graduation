@@ -64,9 +64,6 @@ class PasswordResetController extends Controller
         return response()->json(['message' => 'Password has been reset successfully']);
     }
 
-    /**
-     * Handle a forgot password request (Laravel style)
-     */
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
@@ -76,7 +73,6 @@ class PasswordResetController extends Controller
             return response()->json(['message' => 'البريد الإلكتروني غير مسجل.'], 404);
         }
 
-        // يمكنك هنا استخدام الكود الحالي لإرسال كود أو رابط
         $code = rand(100000, 999999);
         \Cache::put('reset_code_' . $driver->email, $code, now()->addMinutes(10));
 
